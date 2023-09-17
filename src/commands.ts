@@ -162,7 +162,7 @@ const minecraft: Command = {
             return;
         }
 
-        if (!process.env.BAT_FILE) {
+        if (process.env.BAT_FILE != null) {
             child.exec(`start cmd.exe /c "${process.env.BAT_FILE}"`, (error, stdout, stderr) => {});
 
             await interaction.followUp({
