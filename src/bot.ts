@@ -33,7 +33,7 @@ client.on("ready", async () => {
 client.on("messageCreate", msg => {
     if (msg.author.bot) return;
 
-    if (msg.content.startsWith("!rolltts")) {
+    if (msg.content.includes("!rolltts")) {
         const options = {
             content: roll(msg.content),
             tts: true
@@ -43,13 +43,17 @@ client.on("messageCreate", msg => {
         } catch (error) {
             msg.channel.send("I can't decode your roll!");
         }
-    } else if (msg.content.startsWith("!roll")) {
+        return;
+    } else if (msg.content.includes("!roll")) {
         try {
             msg.reply(roll(msg.content));
         } catch (error) {
             msg.reply("I can't decode your roll!");
         }
-    } else if (msg.content.startsWith("!8ballin")) {
+        return;
+    }
+    
+    if (msg.content.includes("!8ballin")) {
         const options = {
             content: getRandomAnswer(),
             tts: true
@@ -59,6 +63,7 @@ client.on("messageCreate", msg => {
         } catch (error) {
             msg.channel.send("Voi vittu, jotain meni rikki!");
         }
+        return;
     }
 });
 

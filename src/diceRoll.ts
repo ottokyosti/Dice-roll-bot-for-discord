@@ -1,27 +1,29 @@
-const ottoPog = "<:ottopog:837751302036783154>"
-const tyhjiokass = "<:tyhjiokass:1108887711655411813>"
+require("dotenv").config();
+
+const successEmoji: string = process.env.EMOJI_POS != undefined ? process.env.EMOJI_POS : "";
+const failureEmoji: string = process.env.EMOJI_NEG != undefined ? process.env.EMOJI_NEG : "";
 
 const roll = (msg: string): string => {
-    const msgComponents = msg.split(" ").splice(1);
+    const msgComponents: string[] = msg.split(" ").splice(1);
     const diceResult: number[] = diceRoll(msgComponents[0]);
-    const diceSum = diceResult.reduce((previous, current) => previous + current, 0);
-    const restOfArray = msgComponents.slice(1);
-    const finalResult = calculateRest(diceSum, restOfArray);
+    const diceSum: number = diceResult.reduce((previous, current) => previous + current, 0);
+    const restOfArray: string[] = msgComponents.slice(1);
+    const finalResult: number = calculateRest(diceSum, restOfArray);
     if (msgComponents.length == 1) {
         if (diceResult.length == 1 && diceResult[0] == 1) {
-            return `${tyhjiokass} Juu thruu shit **${finalResult}!** ${tyhjiokass}`
+            return `${failureEmoji} Juu thruu shit **${finalResult}!** ${failureEmoji}`
         } else if (diceResult.length == 1 && diceResult[0] == 20) {
-            return `${ottoPog} **Se on natural ${diceResult[0]}! ${ottoPog}**`;
+            return `${successEmoji} **Se on natural ${diceResult[0]}! ${successEmoji}**`;
         } else if (diceResult.length != 1) {
             return `Noppien tulos on **${finalResult}**! Sinä heitit **${diceResult.join(", ")}!**`
         } else {
             return `Nopanheittosi tulos on **${finalResult}**!`;
         }
     } else {
-        if (diceResult[0] == 20) {
-            return `${ottoPog} **Se on natural ${diceResult[0]}!** ${ottoPog}, mutta yhdistetty tulos on **${finalResult}**!`
-        } else if (diceResult[0] == 1) {
-            return `${tyhjiokass} Juu thruu shit **${diceResult[0]}!** ${tyhjiokass}, mutta yhdistetty tulos on **${finalResult}**!`
+        if (diceResult.includes(20)) {
+            return `${successEmoji} **Se on natural ${diceResult[0]}!** ${successEmoji}, mutta yhdistetty tulos on **${finalResult}**!`
+        } else if (diceResult.includes(1)) {
+            return `${failureEmoji} Juu thruu shit **${diceResult[0]}!** ${failureEmoji}, mutta yhdistetty tulos on **${finalResult}**!`
         } else {
             return `Kokonaistulos on **${finalResult}**! Sinä heitit **${diceResult.join(", ")}!**`
         }
@@ -29,7 +31,7 @@ const roll = (msg: string): string => {
 }
 
 const diceRoll = (dice: string): number[] => {
-    let diceComponents = dice.split("d");
+    let diceComponents: string[] = dice.split("d");
     let multiplier: number;
     multiplier = (diceComponents[0] != "") ? +diceComponents[0] : 1
     const diceType: number = +diceComponents[1];
