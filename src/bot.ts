@@ -33,9 +33,20 @@ client.on("ready", async () => {
 client.on("messageCreate", msg => {
     if (msg.author.bot) return;
 
-    if (msg.content.includes("!rolltts")) {
+    if (msg.content.includes("!rolladvantage")) {
         const options = {
-            content: roll(msg.content),
+            content: roll(msg.content, true),
+            tts: false
+        }
+        try {
+            msg.channel.send(options);
+        } catch (error) {
+            msg.channel.send("I can't decode your roll");
+        }
+        return;
+    } else if (msg.content.includes("!rolltts")) {
+        const options = {
+            content: roll(msg.content, false),
             tts: true
         }
         try {
@@ -46,7 +57,7 @@ client.on("messageCreate", msg => {
         return;
     } else if (msg.content.includes("!roll")) {
         try {
-            msg.reply(roll(msg.content));
+            msg.reply(roll(msg.content, false));
         } catch (error) {
             msg.reply("I can't decode your roll!");
         }
