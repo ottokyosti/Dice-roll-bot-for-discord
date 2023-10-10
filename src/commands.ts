@@ -153,17 +153,25 @@ const minecraft: Command = {
     description: "Starts a minecraft server on users local computer",
     type: ApplicationCommandType.ChatInput,
     run: async (client: Client, interaction: CommandInteraction) => {
-        const currentUser: String = interaction.user.id;
+        const currentUser: string = interaction.user.id;
+        if (process.env.MY_USER_ID == undefined) {
+            await interaction.followUp({
+                ephemeral: true,
+                content: "MY_USER_ID is not defined"
+            });
+            return;
+        }
+
         if (currentUser != process.env.MY_USER_ID) {
-            await interaction.reply({
+            await interaction.followUp({
                 ephemeral: true,
                 content: "This command is restricted to the owner of the bot"
             });
             return;
         }
 
-        if (process.env.BAT_FILE != null) {
-            child.exec(`start cmd.exe /c "${process.env.BAT_FILE}"`, (error, stdout, stderr) => {});
+        if (process.env.BAT_FILE_PATH != null) {
+            child.exec(`start cmd.exe /c "${process.env.BAT_FILE_PATH}"`, (error, stdout, stderr) => {});
 
             await interaction.followUp({
                 ephemeral: false,
