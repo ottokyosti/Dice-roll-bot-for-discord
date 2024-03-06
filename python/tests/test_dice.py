@@ -5,15 +5,19 @@ class TestDiceFunctions(unittest.TestCase):
 
     @classmethod
     def setUpClass(self):
-        self.DM = DiceMachine("3d20 + 2")
+        self.dm = DiceMachine("d20")
 
     def test_validation(self):
         print("\nTesting validation with valid values:\n")
-        test_values = ["d20", "2d4 + 21 + d8", "2d4+21+d8"]
-        for value in test_values:
-            print(f"Does '{value}' match with regex?")
-            print(f"Expected value: {value.replace(" ", "")} | Actual value: {self.DM.validate(value)}")
-            self.assertEqual(self.DM.validate(value), value.replace(" ", ""))
+        print("Does 'd20' get through validation?")
+        print(f"Expected value: ['d20'] | Actual value: {self.dm.validate("d20")}")
+        self.assertEqual(self.dm.validate("d20"), ["d20"])
+        print("Does '2d8 + 3 - d8' get through validation?")
+        print(f"Expected value: ['2d8', '+', '3', '-', 'd8'] | Actual value: {self.dm.validate("d20")}")
+        self.assertEqual(self.dm.validate("2d8 + 3 - d8"), ["2d8", "+", "3", "-", "d8"])
+        print("Does 'd81+302+43d8' get through validation?")
+        print(f"Expected value: ['d81', '+', '302', '+', '43d8'] | Actual value: {self.dm.validate("d81+302+43d8")}")
+        self.assertEqual(self.dm.validate("d81+302+43d8"), ["d81", "+", "302", "+", "43d8"])
 
         print("\nTesting validation with invalid values:\n")
         test_values = ["2dd2+43", 
@@ -27,9 +31,9 @@ class TestDiceFunctions(unittest.TestCase):
                        "+",
                        "2d"]
         for value in test_values:
-            print(f"Does '{value}' fail regex match?")
-            print(f"Expected value: '' | Actual value: {self.DM.validate(value)}")
-            self.assertEqual(self.DM.validate(value), "")
+            print(f"Does '{value}' fail validation?")
+            print(f"Expected value: [] | Actual value: {self.dm.validate(value)}")
+            self.assertEqual(self.dm.validate(value), [])
         print("Validation testing done")
 
 if __name__ == "__main__":
