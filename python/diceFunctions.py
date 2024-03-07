@@ -4,7 +4,7 @@ class DiceMachine():
     def __init__(self, dice_notation = "d20"):
         self._rolls = []
         self._modifiers = []
-        self._dice_notation = self.validate(dice_notation)
+        self._dice_notation = self.__validate(dice_notation)
 
     @property
     def rolls(self):
@@ -28,9 +28,9 @@ class DiceMachine():
 
     @dice_notation.setter
     def dice_notation(self, value):
-        self._dice_notation = self.validate(value)
+        self._dice_notation = self.__validate(value)
 
-    def validate(self, diceStr: str):
+    def __validate(self, diceStr: str):
         cleaned_str = diceStr.replace(" ", "")
         match = re.match(r"(?!.*[\+\-]{2,}|.*d{2,}|.*d[\+\-]|\d*d\d+d|^[\+\-]|.*[d\+\-]$)[\d\+\-d]+", cleaned_str)
 
