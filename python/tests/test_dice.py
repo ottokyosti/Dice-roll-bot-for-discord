@@ -1,5 +1,7 @@
 import re
+import random
 import unittest
+from unittest.mock import patch
 from diceFunctions import DiceMachine
 
 class DiceValidator():
@@ -11,6 +13,15 @@ class DiceValidator():
         if match:
             return re.findall(r"\d*d\d+|[\+\-]|\d+", cleaned_str)
         return []
+    
+    @staticmethod
+    def rolls_list(mult, dice):
+        multInt = int(mult)
+        diceInt = int(dice)
+        rolls = [0 for _ in range(multInt)]
+        for index in range(len(rolls)):
+            rolls[index] = random.randint(1, diceInt)
+        return rolls
 
 class TestDiceFunctions(unittest.TestCase):
 
@@ -41,7 +52,15 @@ class TestDiceFunctions(unittest.TestCase):
             print(f"Does '{value}' fail validation?")
             print(f"Expected value: [] | Actual value: {DiceValidator.validate(value)}")
             self.assertEqual(DiceValidator.validate(value), [])
-        print("Validation testing done")
-
+    
+    def test_random(self):
+        print("\nTesting random values\n")
+        print("Replacing random.randint function to return specific values...")
+        with patch("random.randint", return_value = 4):
+            result = DiceValidator.rolls_list(mult = "3", dice = "6")
+        expected_result = [4, 4, 4]
+        print(f"Expected result: {expected_result}, Actual result: {result}")
+        self.assertEqual(result, expected_result)
+        
 if __name__ == "__main__":
     unittest.main()
