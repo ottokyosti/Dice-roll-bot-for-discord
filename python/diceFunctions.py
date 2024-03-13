@@ -57,13 +57,15 @@ class DiceMachine():
         return rolls
     
     def roll(self):
+        total_sum = 0
         for value in self._dice_notation:
             if "d" in value:
                 split = re.findall(r"\d+", value)
                 if len(split) > 1:
-                    self._rolls.append({"notation": value, 
-                                        "rolls": self.__generate_rolls(split[0], split[1])})
+                    rolls = self.__generate_rolls(split[0], split[1])
                 else:
-                    self._rolls.append({"notation": value, 
-                                        "rolls": self.__generate_rolls("1", split[0])})
+                    rolls = self.__generate_rolls("1", split[0])
+                self._rolls.append({"notation": value, "rolls": rolls})
+                total_sum = total_sum + sum(rolls)
+                
                 

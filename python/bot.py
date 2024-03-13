@@ -21,7 +21,10 @@ async def on_ready():
 
 @bot.tree.command(name = "roll", description = "Roll a dice!")
 async def roll(interaction: discord.Interaction, roll: str):
-    
     await interaction.response.send_message("placeholder")
+
+@bot.tree.command(name = "avatar", description = "Get users avatar")
+async def avatar(interaction: discord.Interaction, member: discord.Member = None):
+    await interaction.response.send_message(member.display_avatar)
 
 bot.run(token)
