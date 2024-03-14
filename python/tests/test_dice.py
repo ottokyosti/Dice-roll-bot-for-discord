@@ -25,6 +25,10 @@ class DiceValidator():
 
 class TestDiceFunctions(unittest.TestCase):
 
+    @classmethod
+    def setUpClass(self):
+        self.dice_machines = [DiceMachine("d20 + 5 + 3"), DiceMachine("2d4 + 2d4 - 6"), DiceMachine("d20")]
+
     def test_validation(self):
         print("\nTesting validation with valid values:\n")
         print("Does 'd20' get through validation?")
@@ -61,6 +65,17 @@ class TestDiceFunctions(unittest.TestCase):
         expected_result = [4, 4, 4]
         print(f"Expected result: {expected_result}, Actual result: {result}")
         self.assertEqual(result, expected_result)
-        
+
+    def test_roll(self):
+        print("\nTesting roll function 50 times\n")
+        for _ in range(50):
+            for value in self.dice_machines:
+                value.roll()
+            expected_results = [range(9, 29), range(-1, 27), range(1, 21)]
+            for i in range(len(expected_results)):
+                print(f"Expected result: {expected_results[i]}, Actual result: {self.dice_machines[i].result}")
+                self.assertIn(self.dice_machines[i].result, expected_results[i])
+            print()
+
 if __name__ == "__main__":
     unittest.main()
