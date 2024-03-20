@@ -67,7 +67,7 @@ class TestDiceFunctions(unittest.TestCase):
         self.assertEqual(result, expected_result)
 
     def test_roll(self):
-        print("\nTesting roll function 50 times\n")
+        print("\nRolling dice 50 times\n")
         for _ in range(50):
             for value in self.dice_machines:
                 value.roll()

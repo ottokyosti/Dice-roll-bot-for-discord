@@ -1,6 +1,7 @@
 import discord
 from discord.ext import commands
 import random
+from diceFunctions import DiceMachine
 
 import os
 
@@ -21,7 +22,9 @@ async def on_ready():
 
 @bot.tree.command(name = "roll", description = "Roll a dice!")
 async def roll(interaction: discord.Interaction, roll: str = "d20"):
-    await interaction.response.send_message("placeholder")
+    dm = DiceMachine(roll)
+    dm.roll()
+    await interaction.response.send_message(dm.roll_to_string())
 
 @bot.tree.command(name = "avatar", description = "Get users avatar")
 async def avatar(interaction: discord.Interaction, member: discord.Member = None):

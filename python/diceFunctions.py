@@ -1,13 +1,19 @@
 import re
 import random
+import os
+from dotenv import load_dotenv
 
 class DiceMachine():
     def __init__(self, dice_notation):
+        load_dotenv()
         self._rolls = []
-        # self._modifiers = []
         self._dice_notation_str = dice_notation
         self._dice_notation = self.__validate(dice_notation)
         self._result = 0
+        self._emojis = {"EMOJI_POS": None, "EMOJI_NEG": None}
+        for item in self._emojis:
+            self._emojis[item] = os.environ.get(item)
+            self._emojis[item] = self._emojis[item] if self._emojis[item] is not None else ""
 
     @property
     def rolls(self):
@@ -16,14 +22,6 @@ class DiceMachine():
     @rolls.setter
     def rolls(self, value):
         self._rolls = value
-
-    # @property
-    # def modifiers(self):
-    #     return self._modifiers
-
-    # @modifiers.setter
-    # def modifiers(self, value):
-    #     self._modifiers = value
 
     @property
     def dice_notation_str(self):
@@ -48,6 +46,14 @@ class DiceMachine():
     @result.setter
     def result(self, value):
         self._result = value
+
+    @property
+    def emojis(self):
+        return self._emojis
+    
+    @emojis.setter
+    def emojis(self, value):
+        self._emojis = value
 
     def __validate(self, diceStr: str):
         cleaned_str = diceStr.replace(" ", "")
@@ -84,3 +90,27 @@ class DiceMachine():
         joined_equation = "".join(equation)
         result = eval(joined_equation)
         self._result = result if result > 0 else 1
+
+    def roll_to_string(self):
+        if len(self._dice_notation) == 0:
+            return "Incorrect dice notation!"
+
+        if len(self._rolls) == 1:
+            if 20 in self._rolls[0]["rolls"]:
+                return f"{self._emojis["EMOJI_POS"]} Kritikaalinen suksessi! Heitit **20**! {self._emojis["EMOJI_POS"]} Lopullinen summa tho oli **{self._result}**"
+            elif 1 in self._rolls[0]["rolls"]:
+                return f"{self._emojis["EMOJI_NEG"]} Juu thruu shit **1**! {self._emojis["EMOJI_NEG"]} Lopullinen summa tho oli **{self._result}**"
+            else:
+                return f"Heitit **{self._rolls[0]["rolls"][0]}**! Lopullinen summa tho oli **{self._result}**"
+        
+        roll_string = "Heitit: \n"
+
+        for item in self._rolls:
+            notation = item["notation"]
+            rolls = item["rolls"]
+            roll_string += f"{notation}: **{", ".join(str(roll) for roll in rolls)}**,\n"
+
+        roll_string = roll_string.rstrip(", ")
+        roll_string += f"Lopullinen summa tho oli **{self._result}**"
+        
+        return roll_string
