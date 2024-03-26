@@ -134,3 +134,6 @@ __pycache__/
 *.pyc
 *.pyo
 *.pyd
+
+# Specific nickname .txt files
+nicknames/*
