@@ -137,3 +137,4 @@ __pycache__/
 
 # Specific nickname .txt files in python path
 python/nicknames/*
+!python/nickname/.gitkeep
