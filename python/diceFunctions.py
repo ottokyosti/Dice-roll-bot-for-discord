@@ -108,7 +108,7 @@ class DiceMachine():
         for item in self._rolls:
             notation = item["notation"]
             rolls = item["rolls"]
-            roll_string += f"{notation}: **{", ".join(str(roll) for roll in rolls)}**,\n"
+            roll_string += f"{notation}: **{', '.join(str(roll) for roll in rolls)}**,\n"
 
         roll_string = roll_string.rstrip(", ")
         roll_string += f"Lopullinen summa tho oli **{self._result}**"
