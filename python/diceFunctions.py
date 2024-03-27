@@ -96,14 +96,16 @@ class DiceMachine():
             return "Incorrect dice notation!"
 
         if len(self._rolls) == 1:
+            special_case_string = f"Heität: {self._dice_notation_str}\n"
             if 20 in self._rolls[0]["rolls"]:
-                return f"{self._emojis['EMOJI_POS']} Kritikaalinen suksessi! Heitit **20**! {self._emojis['EMOJI_POS']} Lopullinen summa tho oli **{self._result}**"
+                special_case_string += f"{self._emojis['EMOJI_POS']} Kritikaalinen suksessi! Heitit **20**! {self._emojis['EMOJI_POS']} Lopullinen summa tho oli **{self._result}**"
             elif 1 in self._rolls[0]["rolls"]:
-                return f"{self._emojis['EMOJI_NEG']} Juu thruu shit **1**! {self._emojis['EMOJI_NEG']} Lopullinen summa tho oli **{self._result}**"
+                special_case_string += f"{self._emojis['EMOJI_NEG']} Juu thruu shit **1**! {self._emojis['EMOJI_NEG']} Lopullinen summa tho oli **{self._result}**"
             else:
-                return f"Heitit **{self._rolls[0]['rolls'][0]}**! Lopullinen summa tho oli **{self._result}**"
+                special_case_string += f"Heitit **{self._rolls[0]['rolls'][0]}**! Lopullinen summa tho oli **{self._result}**"
+            return special_case_string
         
-        roll_string = "Heitit: \n"
+        roll_string = f"Heität: {self._dice_notation_str}\nNopanheitot:\n"
 
         for item in self._rolls:
             notation = item["notation"]
