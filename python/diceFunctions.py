@@ -97,11 +97,11 @@ class DiceMachine():
 
         if len(self._rolls) == 1:
             if 20 in self._rolls[0]["rolls"]:
-                return f"{self._emojis["EMOJI_POS"]} Kritikaalinen suksessi! Heitit **20**! {self._emojis["EMOJI_POS"]} Lopullinen summa tho oli **{self._result}**"
+                return f"{self._emojis['EMOJI_POS']} Kritikaalinen suksessi! Heitit **20**! {self._emojis['EMOJI_POS']} Lopullinen summa tho oli **{self._result}**"
             elif 1 in self._rolls[0]["rolls"]:
-                return f"{self._emojis["EMOJI_NEG"]} Juu thruu shit **1**! {self._emojis["EMOJI_NEG"]} Lopullinen summa tho oli **{self._result}**"
+                return f"{self._emojis['EMOJI_NEG']} Juu thruu shit **1**! {self._emojis['EMOJI_NEG']} Lopullinen summa tho oli **{self._result}**"
             else:
-                return f"Heitit **{self._rolls[0]["rolls"][0]}**! Lopullinen summa tho oli **{self._result}**"
+                return f"Heitit **{self._rolls[0]['rolls'][0]}**! Lopullinen summa tho oli **{self._result}**"
         
         roll_string = "Heitit: \n"
 
