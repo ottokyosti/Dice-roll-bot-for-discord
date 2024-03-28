@@ -1,5 +1,6 @@
 import discord
 from discord.ext import commands
+from datetime import date
 from diceFunctions import DiceMachine
 
 import os
@@ -14,7 +15,7 @@ intents = discord.Intents.default()
 intents.presences = True
 intents.message_content = True
 intents.members = True
-activity = discord.Activity(type = discord.ActivityType.listening, name = "Marching Cadence")
+activity = discord.Activity(type = discord.ActivityType.listening, name = "Chipi Chipi Chapa Chapa")
 bot = commands.Bot(command_prefix = "!", activity = activity, intents = intents)
 
 @bot.event
@@ -25,9 +26,10 @@ async def on_ready():
 @bot.event
 async def on_member_update(before, after):
     if after.nick != before.nick:
+        today = date.today()
         file_path = os.path.join("nicknames", after.name + ".txt")
         with open(file_path, "a") as file:
-            file.write(after.nick + "\n")
+            file.write(f"[{today.strftime('%d/%m/%Y')}] {after.nick}\n")
 
 @bot.tree.command(name = "get_nicknames", description = "Displays all stored nicknames for a user")
 async def get_nicknames(interaction: discord.Interaction):
