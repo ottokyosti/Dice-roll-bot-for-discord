@@ -14,12 +14,12 @@ intents = discord.Intents.default()
 intents.presences = True
 intents.message_content = True
 intents.members = True
-bot = commands.Bot(command_prefix = "!", intents = intents)
+activity = discord.Activity(type = discord.ActivityType.listening, name = "Marching Cadence")
+bot = commands.Bot(command_prefix = "!", activity = activity, intents = intents)
 
 @bot.event
 async def on_ready():
     await bot.tree.sync()
-    await bot.change_presence(activity = discord.CustomActivity(name = "Definitely not Automaton"))
     print(f"Logged on as {bot.user.name}")
 
 @bot.event
