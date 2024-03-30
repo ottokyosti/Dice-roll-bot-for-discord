@@ -1,9 +1,11 @@
 import discord
+from discord import FFmpegPCMAudio
 from discord.ext import commands
 from datetime import date
 from diceFunctions import DiceMachine
 
 import os
+import asyncio
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -51,5 +53,25 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
         await interaction.response.send_message(member.display_avatar)
     else:
         await interaction.response.send_message("No member specified")
+
+@bot.hybrid_command(name = "chipichipi", description = "Chipi chipi chapa chapa")
+async def chipi(ctx: commands.Context):
+    if ctx.author.voice and ctx.author.voice.channel:
+        voice_channel = ctx.author.voice.channel
+        voice_client = await voice_channel.connect()
+
+        if not voice_client.is_playing():
+            with open("chipi-chipi-chapa-chapa.gif", "rb") as file:
+                sent_message = await ctx.send(file = discord.File(file))
+            voice_client.play(FFmpegPCMAudio("chipi.mp3"))
+            while voice_client.is_playing():
+                await asyncio.sleep(1)
+        else:
+            await ctx.send("I'm already playing!")
+        
+        await voice_client.disconnect()
+        await sent_message.delete()
+    else:
+        await ctx.send("You must be in a voice channel to use this command!")
 
 bot.run(token)
