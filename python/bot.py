@@ -1,6 +1,8 @@
 import discord
 from discord import FFmpegPCMAudio
 from discord.ext import commands
+from elevenlabs import VoiceSettings, save
+from elevenlabs.client import ElevenLabs
 from datetime import date
 from diceFunctions import DiceMachine
 
@@ -19,6 +21,10 @@ intents.message_content = True
 intents.members = True
 activity = discord.Activity(type = discord.ActivityType.listening, name = "Chipi Chipi Chapa Chapa")
 bot = commands.Bot(command_prefix = "!", activity = activity, intents = intents)
+
+elevenlabs_client = ElevenLabs(
+    api_key = os.environ.get("ELEVENLABS_API_KEY")
+)
 
 @bot.event
 async def on_ready():
@@ -54,9 +60,41 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
     else:
         await interaction.response.send_message("No member specified")
 
+@bot.hybrid_command(name = "say", description = "Write something and let the bot say it")
+async def say(ctx: commands.Context, msg: str):
+    if ctx.author.voice and ctx.author.voice.channel:
+        await ctx.defer()
+        audio = elevenlabs_client.generate(
+            text = msg,
+            voice = "roope",
+            model = "eleven_multilingual_v2",
+            voice_settings = VoiceSettings(
+                stability = 0.3,
+                similarity_boost = 0.9,
+                style = 0.75
+            )
+        )
+
+        save(audio, "output.mp3")
+
+        voice_channel = ctx.author.voice.channel
+        voice_client = await voice_channel.connect()
+        if not voice_client.is_playing():
+            voice_client.play(FFmpegPCMAudio("output.mp3"))
+            while voice_client.is_playing():
+                await asyncio.sleep(1)
+            await ctx.send(msg)
+        else:
+            await ctx.send("I'm already playing!")
+        await voice_client.disconnect()
+        os.remove("output.mp3")
+    else:
+        await ctx.send("You must be in a voice channel to use this command!")
+
 @bot.hybrid_command(name = "chipichipi", description = "Chipi chipi chapa chapa")
 async def chipi(ctx: commands.Context):
     if ctx.author.voice and ctx.author.voice.channel:
+        await ctx.defer()
         voice_channel = ctx.author.voice.channel
         voice_client = await voice_channel.connect()
 
