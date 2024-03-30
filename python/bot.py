@@ -23,7 +23,8 @@ activity = discord.Activity(type = discord.ActivityType.listening, name = "Chipi
 bot = commands.Bot(command_prefix = "!", activity = activity, intents = intents)
 
 elevenlabs_client = ElevenLabs(
-    api_key = os.environ.get("ELEVENLABS_API_KEY")
+    api_key = os.environ.get("ELEVENLABS_API_KEY"),
+    timeout = 120
 )
 
 @bot.event
