@@ -63,14 +63,14 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
 
 @bot.hybrid_command(name = "say", description = "Write something and let the bot say it")
 async def say(ctx: commands.Context, voice: str, msg: str):
-    if voice == "roope":
+    if voice == "Nipsu":
         voice_settings = VoiceSettings(
             stability = 0.3,
             similarity_boost = 0.9,
             style = 0.6,
             use_speaker_boost = True
         )
-    elif voice == "Nipsu":
+    elif voice == "Roope" or voice == "Otto":
         voice_settings = VoiceSettings(
                 stability = 0.3,
                 similarity_boost = 0.9,
