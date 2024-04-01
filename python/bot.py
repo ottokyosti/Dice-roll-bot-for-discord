@@ -98,7 +98,7 @@ async def say(ctx: commands.Context, voice: str, msg: str):
             voice_client.play(FFmpegPCMAudio("output.mp3"))
             while voice_client.is_playing():
                 await asyncio.sleep(1)
-            await ctx.send(msg)
+            await ctx.send(f"{voice}: {msg}")
         else:
             await ctx.send("I'm already playing!")
         await voice_client.disconnect()
