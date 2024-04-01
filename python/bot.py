@@ -62,18 +62,32 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
         await interaction.response.send_message("No member specified")
 
 @bot.hybrid_command(name = "say", description = "Write something and let the bot say it")
-async def say(ctx: commands.Context, msg: str):
+async def say(ctx: commands.Context, voice: str, msg: str):
+    if voice == "roope":
+        voice_settings = VoiceSettings(
+            stability = 0.3,
+            similarity_boost = 0.9,
+            style = 0.6,
+            use_speaker_boost = True
+        )
+    elif voice == "Nipsu":
+        voice_settings = VoiceSettings(
+                stability = 0.3,
+                similarity_boost = 0.9,
+                style = 0.75,
+                use_speaker_boost = True
+            )
+    else:
+        await ctx.send(f"Cannot find voice by the name of {voice}")
+        return
+    
     if ctx.author.voice and ctx.author.voice.channel:
         await ctx.defer()
         audio = elevenlabs_client.generate(
             text = msg,
-            voice = "roope",
+            voice = voice,
             model = "eleven_multilingual_v2",
-            voice_settings = VoiceSettings(
-                stability = 0.3,
-                similarity_boost = 0.9,
-                style = 0.75
-            )
+            voice_settings = voice_settings
         )
 
         save(audio, "output.mp3")
