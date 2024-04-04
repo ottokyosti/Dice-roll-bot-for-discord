@@ -5,6 +5,7 @@ from elevenlabs import VoiceSettings, save
 from elevenlabs.client import ElevenLabs
 from datetime import date
 from diceFunctions import DiceMachine
+from getVoiceSettings import get_voice_settings
 
 import os
 import asyncio
@@ -63,21 +64,8 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
 
 @bot.hybrid_command(name = "say", description = "Write something and let the bot say it")
 async def say(ctx: commands.Context, voice: str, msg: str):
-    if voice == "Nipsu":
-        voice_settings = VoiceSettings(
-            stability = 0.3,
-            similarity_boost = 0.9,
-            style = 0.6,
-            use_speaker_boost = True
-        )
-    elif voice == "Roope" or voice == "Otto":
-        voice_settings = VoiceSettings(
-                stability = 0.3,
-                similarity_boost = 0.9,
-                style = 0.75,
-                use_speaker_boost = True
-            )
-    else:
+    voice_settings = get_voice_settings(voice)
+    if voice_settings is None:
         await ctx.send(f"Cannot find voice by the name of {voice}")
         return
     
