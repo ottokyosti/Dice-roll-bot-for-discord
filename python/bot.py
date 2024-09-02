@@ -129,7 +129,7 @@ async def chipi(ctx: commands.Context):
         if not voice_client.is_playing():
             file_path_audio = os.path.join("media", "audio", "chipi.mp3")
             file_path_img = os.path.join("media", "img", "chipi-chipi-chapa-chapa.gif")
-            sent_message = await ctx.send(file = discord.File(file_path_audio))
+            sent_message = await ctx.send(file = discord.File(file_path_img))
             voice_client.play(FFmpegPCMAudio(file_path_audio))
             while voice_client.is_playing():
                 await asyncio.sleep(0.5)
