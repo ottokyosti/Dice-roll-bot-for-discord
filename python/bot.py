@@ -1,7 +1,7 @@
 import discord
 from discord import FFmpegPCMAudio
 from discord.ext import commands
-from elevenlabs import VoiceSettings, save
+from elevenlabs import VoiceSettings, save, play
 from elevenlabs.client import ElevenLabs
 from datetime import date
 from diceFunctions import DiceMachine
@@ -30,7 +30,6 @@ elevenlabs_client = ElevenLabs(
 
 @bot.event
 async def on_ready():
-    await bot.tree.sync()
     print(f"Logged on as {bot.user.name}")
 
 @bot.event
@@ -40,6 +39,15 @@ async def on_member_update(before, after):
         file_path = os.path.join("nicknames", after.name + ".txt")
         with open(file_path, "a") as file:
             file.write(f"[{today.strftime('%d/%m/%Y')}] {after.nick}\n")
+
+@bot.command(name = "sync")
+async def sync_commands(ctx: commands.Context):
+    await bot.tree.sync()
+    message = await ctx.send(f"Bot commands synced")
+    await asyncio.sleep(3)
+    await message.delete()
+    await ctx.message.delete()
+
 
 @bot.tree.command(name = "get_nicknames", description = "Displays all stored nicknames for a user")
 async def get_nicknames(interaction: discord.Interaction):
@@ -62,6 +70,23 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
     else:
         await interaction.response.send_message("No member specified")
 
+@bot.hybrid_command(name = "mimir", description = "Give your homies a good night!")
+async def mimir(ctx: commands.Context):
+    if not ctx.author.voice or not ctx.author.voice.channel:
+        await ctx.send(f"You must be in a voice channel to use this command!")
+        return
+    
+    voice_channel = ctx.author.voice.channel
+    voice_client = await voice_channel.connect()
+    if not voice_client.is_playing():
+        file_path_audio = os.path.join("media", "audio", "envoiauttaa.mp3")
+        file_path_img = os.path.join("media", "img", "niilo_thumb.png")
+        await ctx.send(file = discord.File(file_path_img))
+        voice_client.play(FFmpegPCMAudio(file_path_audio))
+        while voice_client.is_playing():
+            await asyncio.sleep(0.5)
+        await voice_client.disconnect()     
+        
 @bot.hybrid_command(name = "say", description = "Write something and let the bot say it")
 async def say(ctx: commands.Context, voice: str, msg: str):
     voice_settings = get_voice_settings(voice)
@@ -85,11 +110,11 @@ async def say(ctx: commands.Context, voice: str, msg: str):
         if not voice_client.is_playing():
             voice_client.play(FFmpegPCMAudio("output.mp3"))
             while voice_client.is_playing():
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
             await ctx.send(f"{voice}: {msg}")
+            await voice_client.disconnect()
         else:
             await ctx.send("I'm already playing!")
-        await voice_client.disconnect()
         os.remove("output.mp3")
     else:
         await ctx.send("You must be in a voice channel to use this command!")
@@ -102,16 +127,16 @@ async def chipi(ctx: commands.Context):
         voice_client = await voice_channel.connect()
 
         if not voice_client.is_playing():
-            with open("chipi-chipi-chapa-chapa.gif", "rb") as file:
-                sent_message = await ctx.send(file = discord.File(file))
-            voice_client.play(FFmpegPCMAudio("chipi.mp3"))
+            file_path_audio = os.path.join("media", "audio", "chipi.mp3")
+            file_path_img = os.path.join("media", "img", "chipi-chipi-chapa-chapa.gif")
+            sent_message = await ctx.send(file = discord.File(file_path_audio))
+            voice_client.play(FFmpegPCMAudio(file_path_audio))
             while voice_client.is_playing():
-                await asyncio.sleep(1)
+                await asyncio.sleep(0.5)
+            await voice_client.disconnect()
+            await sent_message.delete()
         else:
-            await ctx.send("I'm already playing!")
-        
-        await voice_client.disconnect()
-        await sent_message.delete()
+            await ctx.send("I'm already playing!") 
     else:
         await ctx.send("You must be in a voice channel to use this command!")
 
