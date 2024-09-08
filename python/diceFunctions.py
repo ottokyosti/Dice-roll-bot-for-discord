@@ -4,7 +4,7 @@ import os
 from dotenv import load_dotenv
 
 class DiceMachine():
-    def __init__(self, dice_notation):
+    def __init__(self, dice_notation) -> None:
         load_dotenv()
         self._rolls = []
         self._dice_notation_str = dice_notation

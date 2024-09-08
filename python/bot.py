@@ -33,12 +33,27 @@ async def on_ready():
     print(f"Logged on as {bot.user.name}")
 
 @bot.event
-async def on_member_update(before, after):
+async def on_member_update(before: discord.Member, after: discord.Member):
     if after.nick != before.nick:
         today = date.today()
         file_path = os.path.join("nicknames", after.name + ".txt")
         with open(file_path, "a") as file:
             file.write(f"[{today.strftime('%d/%m/%Y')}] {after.nick}\n")
+
+@bot.event
+async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
+    if member.name != "kyhnyboi": 
+        return
+    
+    if before.channel is None and after.channel:
+        voice_channel = after.channel
+        voice_client = await voice_channel.connect()
+        if not voice_client.is_playing():
+            file_path_audio = os.path.join("media", "audio", "spongebob22.mp3")
+            voice_client.play(FFmpegPCMAudio(file_path_audio))
+            while voice_client.is_playing():
+                await asyncio.sleep(0.5)
+        await voice_client.disconnect()
 
 @bot.command(name = "sync")
 async def sync_commands(ctx: commands.Context):
@@ -85,7 +100,7 @@ async def mimir(ctx: commands.Context):
         voice_client.play(FFmpegPCMAudio(file_path_audio))
         while voice_client.is_playing():
             await asyncio.sleep(0.5)
-        await voice_client.disconnect()     
+    await voice_client.disconnect()     
         
 @bot.hybrid_command(name = "say", description = "Write something and let the bot say it")
 async def say(ctx: commands.Context, voice: str, msg: str):
@@ -112,9 +127,9 @@ async def say(ctx: commands.Context, voice: str, msg: str):
             while voice_client.is_playing():
                 await asyncio.sleep(0.5)
             await ctx.send(f"{voice}: {msg}")
-            await voice_client.disconnect()
         else:
             await ctx.send("I'm already playing!")
+        await voice_client.disconnect()
         os.remove("output.mp3")
     else:
         await ctx.send("You must be in a voice channel to use this command!")
@@ -133,10 +148,10 @@ async def chipi(ctx: commands.Context):
             voice_client.play(FFmpegPCMAudio(file_path_audio))
             while voice_client.is_playing():
                 await asyncio.sleep(0.5)
-            await voice_client.disconnect()
             await sent_message.delete()
         else:
-            await ctx.send("I'm already playing!") 
+            await ctx.send("I'm already playing!")
+        await voice_client.disconnect() 
     else:
         await ctx.send("You must be in a voice channel to use this command!")
 
