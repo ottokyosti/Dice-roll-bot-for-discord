@@ -6,6 +6,7 @@ from elevenlabs.client import ElevenLabs
 from datetime import date
 from diceFunctions import DiceMachine
 from getVoiceSettings import get_voice_settings
+from db_query import queryHelper
 
 import os
 import asyncio
@@ -46,11 +47,11 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
         return
     
     if before.channel is None and after.channel:
+        file = await queryHelper()
         voice_channel = after.channel
         voice_client = await voice_channel.connect()
         if not voice_client.is_playing():
-            file_path_audio = os.path.join("media", "audio", "spongebob22.mp3")
-            voice_client.play(FFmpegPCMAudio(file_path_audio))
+            voice_client.play(FFmpegPCMAudio(file))
             while voice_client.is_playing():
                 await asyncio.sleep(0.5)
         await voice_client.disconnect()
@@ -85,6 +86,24 @@ async def avatar(interaction: discord.Interaction, member: discord.Member = None
     else:
         await interaction.response.send_message("No member specified")
 
+@bot.hybrid_command(name = "viisaus", description = "Dispenses wisdom from the mouth of Niilo22")
+async def viisaus(ctx: commands.Context):
+    if not ctx.author.voice or not ctx.author.voice.channel:
+        await ctx.send(f"You must be in a voice channel to use this command!")
+        return
+    
+    file = await queryHelper()
+    voice_channel = ctx.author.voice.channel
+    voice_client = await voice_channel.connect()
+    if not voice_client.is_playing():
+        await ctx.send(file = discord.File("media/img/peukku500.png"), delete_after = 5, silent = True)
+        voice_client.play(FFmpegPCMAudio(file))
+        while voice_client.is_playing():
+            await asyncio.sleep(0.5)
+    else:
+        await ctx.send("I'm already playing!")
+    await voice_client.disconnect()
+
 @bot.hybrid_command(name = "mimir", description = "Give your homies a good night!")
 async def mimir(ctx: commands.Context):
     if not ctx.author.voice or not ctx.author.voice.channel:
@@ -95,11 +114,12 @@ async def mimir(ctx: commands.Context):
     voice_client = await voice_channel.connect()
     if not voice_client.is_playing():
         file_path_audio = os.path.join("media", "audio", "envoiauttaa.mp3")
-        file_path_img = os.path.join("media", "img", "niilo_thumb.png")
-        await ctx.send(file = discord.File(file_path_img))
+        await ctx.send(file = discord.File("media/img/niilo_thumb.png"), silent = True)
         voice_client.play(FFmpegPCMAudio(file_path_audio))
         while voice_client.is_playing():
             await asyncio.sleep(0.5)
+    else:
+        await ctx.send("I'm already playing!")
     await voice_client.disconnect()     
         
 @bot.hybrid_command(name = "say", description = "Write something and let the bot say it")
@@ -143,8 +163,7 @@ async def chipi(ctx: commands.Context):
 
         if not voice_client.is_playing():
             file_path_audio = os.path.join("media", "audio", "chipi.mp3")
-            file_path_img = os.path.join("media", "img", "chipi-chipi-chapa-chapa.gif")
-            sent_message = await ctx.send(file = discord.File(file_path_img))
+            sent_message = await ctx.send(file = discord.File("media/img/chipi-chipi-chapa-chapa.gif"))
             voice_client.play(FFmpegPCMAudio(file_path_audio))
             while voice_client.is_playing():
                 await asyncio.sleep(0.5)
