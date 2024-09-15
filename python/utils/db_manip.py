@@ -9,7 +9,7 @@ load_dotenv()
 
 # Connect to database
 client = mariadb.connect(
-    user = "root",
+    user = "pi",
     password = os.environ.get("DB_PASSWORD"),
     host = "localhost",
     database = "viisausdb"
