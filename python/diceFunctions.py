@@ -95,7 +95,7 @@ class DiceMachine():
         if len(self._dice_notation) == 0:
             return "Incorrect dice notation!"
 
-        if len(self._rolls) == 1:
+        if len(self._rolls) == 1 and len(self._rolls[0]["rolls"]) == 1:
             notation = self._rolls[0]['notation']
             special_case_string = f"Heität: **{self._dice_notation_str}**\n```"
             if 20 in self._rolls[0]["rolls"]:
