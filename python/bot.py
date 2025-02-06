@@ -1,3 +1,4 @@
+import yt_dlp as youtube_dl
 import discord
 from discord import FFmpegPCMAudio
 from discord.ext import commands
@@ -171,6 +172,46 @@ async def chipi(ctx: commands.Context):
         else:
             await ctx.send("I'm already playing!")
         await voice_client.disconnect() 
+    else:
+        await ctx.send("You must be in a voice channel to use this command!")
+
+@bot.hybrid_command(name = "play", description = "Play a sound bite from Youtube")
+async def play(ctx: commands.Context, url: str):
+    if ctx.author.voice and ctx.author.voice.channel:
+        await ctx.defer()
+        voice_channel = ctx.author.voice.channel
+
+        ydl_opts = {
+            "format": "bestaudio/best",
+            "postprocessors": [{
+                "key": "FFmpegExtractAudio",
+                "preferredcodec": "mp3",
+                "preferredquality": "192"
+            }],
+            "outtmpl": "media/audio/%(title)s.%(ext)s",
+            "noplaylist": True
+        }
+
+        with youtube_dl.YoutubeDL(ydl_opts) as ydl:
+            info = ydl.extract_info(url, download = False)
+            duration = info.get("duration", 0)
+            if (duration > 60):
+                await ctx.send("Video is too long! Must be under 60 seconds")
+                return
+            
+            info = ydl.extract_info(url, download = True)
+            filename = ydl.prepare_filename(info).replace(".webm", ".mp3")
+
+        voice_client = await voice_channel.connect()
+        if not voice_client.is_playing():
+            voice_client.play(FFmpegPCMAudio(filename))
+            while voice_client.is_playing():
+                await asyncio.sleep(0.5)
+        else:
+            await ctx.send("I'm already playing!")
+        await voice_client.disconnect()
+        await ctx.send(url)
+        os.remove(filename)
     else:
         await ctx.send("You must be in a voice channel to use this command!")
 
