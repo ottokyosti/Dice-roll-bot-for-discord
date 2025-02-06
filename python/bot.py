@@ -200,7 +200,7 @@ async def play(ctx: commands.Context, url: str):
                 return
             
             info = ydl.extract_info(url, download = True)
-            filename = ydl.prepare_filename(info).replace(".webm", ".mp3")
+            filename = ydl.prepare_filename(info).replace(".webm", ".mp3").replace(".m4a", ".mp3")
 
         voice_client = await voice_channel.connect()
         if not voice_client.is_playing():
