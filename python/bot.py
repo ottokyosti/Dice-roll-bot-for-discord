@@ -44,14 +44,11 @@ async def on_member_update(before: discord.Member, after: discord.Member):
 
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
-    await asyncio.sleep(0.5)
-    if len(after.channel.members) == 0:
-        return
-    
-    if before.channel is None and after.channel:
+    if not member.bot and before.channel is None and after.channel:
+        if len(after.channel.members) <= 1:
+            return
         file = await queryHelper()
-        voice_channel = after.channel
-        voice_client = await voice_channel.connect()
+        voice_client = await after.channel.connect()
         if voice_client.is_playing():
             voice_client.stop()
         voice_client.play(FFmpegPCMAudio(file))
