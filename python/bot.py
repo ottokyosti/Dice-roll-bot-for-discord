@@ -44,17 +44,18 @@ async def on_member_update(before: discord.Member, after: discord.Member):
 
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
-    if member.name != "kyhnyboi": 
+    if len(after.channel.members) == 0:
         return
     
     if before.channel is None and after.channel:
         file = await queryHelper()
         voice_channel = after.channel
         voice_client = await voice_channel.connect()
-        if not voice_client.is_playing():
-            voice_client.play(FFmpegPCMAudio(file))
-            while voice_client.is_playing():
-                await asyncio.sleep(0.5)
+        if voice_client.is_playing():
+            voice_client.stop()
+        voice_client.play(FFmpegPCMAudio(file))
+        while voice_client.is_playing():
+            await asyncio.sleep(0.5)
         await voice_client.disconnect()
 
 @bot.command(name = "sync")
@@ -176,7 +177,7 @@ async def chipi(ctx: commands.Context):
         await ctx.send("You must be in a voice channel to use this command!")
 
 @bot.hybrid_command(name = "play", description = "Play a sound bite from Youtube")
-async def play(ctx: commands.Context, url: str, volume: int = 50):
+async def play(ctx: commands.Context, url: str, volume: int = 75):
     if ctx.author.voice and ctx.author.voice.channel:
         await ctx.defer()
         voice_channel = ctx.author.voice.channel
@@ -197,7 +198,7 @@ async def play(ctx: commands.Context, url: str, volume: int = 50):
             duration = info.get("duration", 0)
             filename = ydl.prepare_filename(info).replace(".webm", ".mp3").replace(".m4a", ".mp3")
 
-        if (duration < 60):
+        if (duration < 120):
             voice_client = await voice_channel.connect()
             if not voice_client.is_playing():
                 await ctx.send(f"Playing audio at {volume}% volume")
@@ -212,7 +213,7 @@ async def play(ctx: commands.Context, url: str, volume: int = 50):
             await voice_client.disconnect()
             await ctx.send(url)
         else:
-            await ctx.send("Video is too long! Must be under 60 seconds")
+            await ctx.send("Video is too long! Must be under 2 minutes")
         os.remove(filename)
     else:
         await ctx.send("You must be in a voice channel to use this command!")
