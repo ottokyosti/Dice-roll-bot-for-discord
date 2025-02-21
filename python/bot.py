@@ -11,6 +11,7 @@ from db_query import queryHelper
 
 import os
 import asyncio
+import random
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -47,14 +48,34 @@ async def on_voice_state_update(member: discord.Member, before: discord.VoiceSta
     if not member.bot and before.channel is None and after.channel:
         if len(after.channel.members) <= 1:
             return
-        file = await queryHelper()
-        voice_client = await after.channel.connect()
-        if voice_client.is_playing():
-            voice_client.stop()
-        voice_client.play(FFmpegPCMAudio(file))
-        while voice_client.is_playing():
-            await asyncio.sleep(0.5)
-        await voice_client.disconnect()
+        fiftyFifty = random.randint(0, 1)
+        if (fiftyFifty == 0):
+            audio = elevenlabs_client.generate(
+                text = f"Jaaahas, kukas se siellä, {member.nick}, tervetuloa masentumaan kanavalle {after.channel.name}!",
+                voice = "Roope",
+                model = "eleven_multilingual_v2",
+                voice_settings = get_voice_settings("Roope")
+            )
+
+            save(audio, "output.mp3")
+
+            voice_client = await after.channel.connect()
+            if voice_client.is_playing():
+                voice_client.stop()
+            voice_client.play(FFmpegPCMAudio("output.mp3"))
+            while voice_client.is_playing():
+                await asyncio.sleep(0.5)
+            await voice_client.disconnect()
+            os.remove("output.mp3")
+        else:
+            file = await queryHelper()
+            voice_client = await after.channel.connect()
+            if voice_client.is_playing():
+                voice_client.stop()
+            voice_client.play(FFmpegPCMAudio(file))
+            while voice_client.is_playing():
+                await asyncio.sleep(0.5)
+            await voice_client.disconnect()
 
 @bot.command(name = "sync")
 async def sync_commands(ctx: commands.Context):
