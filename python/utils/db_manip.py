@@ -22,7 +22,7 @@ cursor.execute("SELECT COUNT(*) FROM viisaudet")
 data = cursor.fetchone()
 
 # Make a list of file paths of all files in specified folder and sort them
-path = "C:\\Users\\Otto\\Downloads\\viisauksia"
+path = "/home/pi/Music"
 onlyfiles = [join(path, f) for f in listdir(path) if isfile(join(path, f))]
 onlyfiles.sort(key = lambda a : len(a))
 
