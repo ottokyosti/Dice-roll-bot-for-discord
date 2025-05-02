@@ -23,7 +23,7 @@ intents = discord.Intents.default()
 intents.presences = True
 intents.message_content = True
 intents.members = True
-activity = discord.Activity(type = discord.ActivityType.listening, name = "Chipi Chipi Chapa Chapa")
+activity = discord.Activity(type = discord.ActivityType.listening, name = "Ghost")
 bot = commands.Bot(command_prefix = "!", activity = activity, intents = intents)
 
 elevenlabs_client = ElevenLabs(
