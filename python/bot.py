@@ -218,7 +218,7 @@ async def play(ctx: commands.Context, url: str, volume: int = 75):
             duration = info.get("duration", 0)
             filename = f"media/audio/{info['title']}.mp3"
 
-        if (duration < 120):
+        if (duration < 150):
             voice_client = await voice_channel.connect()
             if not voice_client.is_playing():
                 await ctx.send(f"Playing audio at {volume}% volume")
