@@ -203,6 +203,7 @@ async def play(ctx: commands.Context, url: str, volume: int = 75):
 
         ydl_opts = {
             "format": "bestaudio/best",
+            "restrictfilenames": True,
             "postprocessors": [{
                 "key": "FFmpegExtractAudio",
                 "preferredcodec": "mp3",
