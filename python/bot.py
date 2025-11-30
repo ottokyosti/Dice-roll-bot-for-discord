@@ -216,7 +216,8 @@ async def play(ctx: commands.Context, url: str, volume: int = 75):
         with youtube_dl.YoutubeDL(ydl_opts) as ydl:
             info = ydl.extract_info(url, download = True)
             duration = info.get("duration", 0)
-            filename = f"media/audio/{info['title']}.mp3"
+            dowloaded = ydl.prepare_filename(info)
+            filename = os.path.splitext(dowloaded)[0] + ".mp3"
 
         if (duration < 150):
             voice_client = await voice_channel.connect()
