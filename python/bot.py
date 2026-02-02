@@ -18,6 +18,8 @@ load_dotenv()
 
 print("Bot is waking up...")
 
+IMAGE_EXTS = (".png", ".jpg", ".jpeg", ".gif", ".webp", ".bmp", ".tiff")
+
 token = os.environ.get("DISCORD_TOKEN")
 intents = discord.Intents.default()
 intents.presences = True
@@ -30,6 +32,20 @@ elevenlabs_client = ElevenLabs(
     api_key = os.environ.get("ELEVENLABS_API_KEY"),
     timeout = 120
 )
+
+def is_image_attachment(a: discord.Attachment) -> bool:
+    if a.content_type and a.content_type.startswith("image/"):
+        return True
+    return a.filename.lower().endswith(IMAGE_EXTS)
+
+def extract_embed_image_urls(msg: discord.Message) -> list[str]:
+    urls = []
+    for e in msg.embeds:
+        if e.image and e.image.url:
+            urls.append(e.image.url)
+        if e.thumbnail and e.thumbnail.url:
+            urls.append(e.thumbnail.url)
+    return urls
 
 @bot.event
 async def on_ready():
@@ -249,5 +265,37 @@ async def stop(ctx: commands.Context):
             await ctx.send("I'm not playing audio...")
     else:
         await ctx.send("I'm not connected to a voice channel...")
+
+@bot.hybrid_command(name="random_image", description="Posts a random image from channel history")
+async def random_image(ctx: commands.Context, channel: discord.TextChannel | None = None, limit: int = 2000):
+    channel = channel or ctx.channel
+    if not isinstance(channel, discord.TextChannel):
+        await ctx.send("This command only works in text channels.")
+        return
+
+    images: list[tuple[discord.Message, discord.Attachment]] = []
+    embed_urls: list[tuple[discord.Message, str]] = []
+
+    async for msg in channel.history(limit=limit):
+        for a in msg.attachments:
+            if is_image_attachment(a):
+                images.append((msg, a))
+        for url in extract_embed_image_urls(msg):
+            embed_urls.append((msg, url))
+
+    if not images and not embed_urls:
+        await ctx.send(f"No images found in the last {limit} messages in {channel.mention}.")
+        return
+
+    # Prefer real attachments; fall back to embedded images
+    if images:
+        msg, a = random.choice(images)
+        await ctx.send(
+            content=f"Random image from {channel.mention} • source: {msg.jump_url}",
+            file=await a.to_file()
+        )
+    else:
+        msg, url = random.choice(embed_urls)
+        await ctx.send(f"Random embedded image from {channel.mention} • source: {msg.jump_url}\n{url}")
 
 bot.run(token)
