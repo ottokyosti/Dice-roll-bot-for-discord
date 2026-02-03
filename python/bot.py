@@ -39,7 +39,7 @@ async def on_ready():
 async def on_member_update(before: discord.Member, after: discord.Member):
     if after.nick != before.nick:
         today = date.today()
-        file_path = os.path.join("nicknames", after.name + ".txt")
+        file_path = os.path.join("nicknames", f"{after.id}.txt")
         with open(file_path, "a") as file:
             file.write(f"[{today.strftime('%d/%m/%Y')}] {after.nick}\n")
 
@@ -88,7 +88,7 @@ async def sync_commands(ctx: commands.Context):
 
 @bot.tree.command(name = "get_nicknames", description = "Displays all stored nicknames for a user")
 async def get_nicknames(interaction: discord.Interaction):
-    file_path = os.path.join("nicknames", interaction.user.name + ".txt")
+    file_path = os.path.join("nicknames", f"{interaction.user.id}.txt")
     file_contents = "```"
     with open(file_path, "r") as file:
         file_contents += file.read()
