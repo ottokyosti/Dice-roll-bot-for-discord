@@ -46,7 +46,7 @@ async def on_member_update(before: discord.Member, after: discord.Member):
 @bot.event
 async def on_voice_state_update(member: discord.Member, before: discord.VoiceState, after: discord.VoiceState):
     if not member.bot and before.channel is None and after.channel:
-        if len(after.channel.members) <= 1:
+        if member.id != 255284645602656257:
             return
         # fiftyFifty = random.randint(0, 1)
         # if (fiftyFifty == 0):
