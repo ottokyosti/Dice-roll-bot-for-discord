@@ -179,6 +179,24 @@ async def chipi(ctx: commands.Context):
     else:
         await ctx.send("You must be in a voice channel to use this command!")
 
+@bot.hybrid_command(name = "bomboclat", description = "52 bomboclat pussywagon chicken nuggets")
+async def bomboclat(ctx: commands.Context):
+    if ctx.author.voice and ctx.author.voice.channel:
+        await ctx.defer()
+        voice_channel = ctx.author.voice.channel
+        voice_client = await voice_channel.connect()
+
+        if not voice_client.is_playing():
+            file_path_audio = os.path.join("media", "audio", "bomboclat.mp3")
+            voice_client.play(FFmpegPCMAudio(file_path_audio))
+            while voice_client.is_playing():
+                await asyncio.sleep(0.5)
+        else:
+            await ctx.send("I'm already playing!")
+        await voice_client.disconnect() 
+    else:
+        await ctx.send("You must be in a voice channel to use this command!")
+
 @bot.hybrid_command(name = "play", description = "Play a sound bite from Youtube")
 async def play(ctx: commands.Context, url: str, volume: int = 75):
     if ctx.author.voice and ctx.author.voice.channel:
